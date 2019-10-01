@@ -1,27 +1,30 @@
+/*!
+ * Source https://github.com/donmahallem/TrapezeApiExpressServer
+ */
+
 export interface ITokenPair {
     access_token: string;
     refresh_token: string;
 }
-import * as jwt from 'jsonwebtoken';
-export const createTokenPair = (keyOrSecret: string): ITokenPair => {
-    return {
+import * as jwt from "jsonwebtoken";
+export const createTokenPair = (keyOrSecret: string): ITokenPair =>
+    ({
         access_token: jwt.sign({
-            type: "access"
+            type: "access",
         }, keyOrSecret, {
             audience: "",
+            expiresIn: "1h",
             issuer: "",
-            subject: "",
             notBefore: "0s",
-            expiresIn: "1h"
+            subject: "",
         }),
         refresh_token: jwt.sign({
-            type: "refresh"
+            type: "refresh",
         }, keyOrSecret, {
             audience: "",
+            expiresIn: "1h",
             issuer: "",
-            subject: "",
             notBefore: "0s",
-            expiresIn: "1h"
-        })
-    }
-}
+            subject: "",
+        }),
+    });

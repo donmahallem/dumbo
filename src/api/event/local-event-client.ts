@@ -1,3 +1,7 @@
+/*!
+ * Source https://github.com/donmahallem/TrapezeApiExpressServer
+ */
+
 import { ILocalEvent } from "./local-event";
 
 export class LocalEventClient {

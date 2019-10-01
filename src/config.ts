@@ -29,5 +29,5 @@ export interface IServerConfig {
         issuer: string;
         audience: string | string[];
         secret: string;
-    }
+    };
 }
