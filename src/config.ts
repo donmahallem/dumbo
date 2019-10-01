@@ -24,4 +24,10 @@ export interface IServerConfig {
      * endpoint to query data from
      */
     endpoint: string;
+
+    jwt: {
+        issuer: string;
+        audience: string | string[];
+        secret: string;
+    }
 }
