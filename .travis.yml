@@ -1,24 +1,26 @@
 language: node_js
-
 node_js:
   - "8"
   - "10"
   - "stable"
+env:
+  global:
+  - COVERALLS_PARALLEL=true
 cache:
   directories:
-    - node_modules
-    - "$(npm config get prefix)/node_modules"
+  - node_modules
+  - "$(npm config get prefix)/node_modules"
+script:
+- npm run test:unit
+after_success:
+- ./coveralls_upload.sh
 jobs:
   include:
-  - stage: Build & Test
-    env:
-      global:
-        - COVERALLS_PARALLEL=true
+  - stage: Test Docs Generation
+    node_js: stable
     script:
-    - npm run test:build
-    - npm run test:unit
-    after_success:
-    - ./coveralls_upload.sh
+      - npm run test:api-docs
+      - npm run test:docs
   - stage: npm release
     node_js: stable
     script: npm run build
