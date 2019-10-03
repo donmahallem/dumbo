@@ -1,5 +1,9 @@
 language: node_js
 
+node_js:
+  - "8"
+  - "10"
+  - "stable"
 cache:
   directories:
     - node_modules
@@ -7,10 +11,6 @@ cache:
 jobs:
   include:
   - stage: Build & Test
-    node_js:
-      - "8"
-      - "10"
-      - "stable"
     env:
       global:
         - COVERALLS_PARALLEL=true
