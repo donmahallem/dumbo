@@ -52,4 +52,8 @@ export class LocalEventRequestHandlers {
             }
         };
     }
+
+    public static isNewVersion(): boolean {
+        return Number.parseInt(process.versions.node) >= 10;
+    }
 }

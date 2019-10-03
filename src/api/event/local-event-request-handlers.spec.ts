@@ -70,6 +70,10 @@ describe(relative(process.cwd(), __filename), () => {
                     done();
                 });
             });
+            it("should be true", () => {
+                const parsed = Number.parseInt(process.versions.node.substr(0, process.versions.node.indexOf("\.")));
+                expect(LocalEventRequestHandlers.isNewVersion()).to.equal(parsed >= 10);
+            })
         });
     });
 });
