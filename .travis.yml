@@ -1,43 +1,45 @@
 language: node_js
-node_js:
-  - "8"
-  - "10"
-  - "stable"
-env:
-  global:
-  - COVERALLS_PARALLEL=true
-  matrix:
-  - TEST_SUITE=lint
-  - TEST_SUITE=build
-  - TEST_SUITE=unit
-  - TEST_SUITE=docs
-  - TEST_SUITE=api-docs
-matrix:
-  exclude:
-    - node_js: "8"
-      env: TEST_SUITE=lint
-    - node_js: "8"
-      env: TEST_SUITE=docs
-    - node_js: "8"
-      env: TEST_SUITE=api-docs
-    - node_js: "10"
-      env: TEST_SUITE=lint
-    - node_js: "10"
-      env: TEST_SUITE=docs
-    - node_js: "10"
-      env: TEST_SUITE=api-docs
-    - node_js: "10"
-      branch: "init"
-cache:
-  directories:
-  - node_modules
-  - "$(npm config get prefix)/node_modules"
-script:
-- npm run test:$TEST_SUITE
-after_success:
-- ./coveralls_upload.sh
+
 jobs:
   include:
+  - stage: Tests
+    node_js:
+      - "8"
+      - "10"
+      - "stable"
+    env:
+      global:
+        - COVERALLS_PARALLEL=true
+      matrix:
+        - TEST_SUITE=lint
+        - TEST_SUITE=build
+        - TEST_SUITE=unit
+        - TEST_SUITE=docs
+        - TEST_SUITE=api-docs
+    matrix:
+      exclude:
+        - node_js: "8"
+          env: TEST_SUITE=lint
+        - node_js: "8"
+          env: TEST_SUITE=docs
+        - node_js: "8"
+          env: TEST_SUITE=api-docs
+        - node_js: "10"
+          env: TEST_SUITE=lint
+        - node_js: "10"
+          env: TEST_SUITE=docs
+        - node_js: "10"
+          env: TEST_SUITE=api-docs
+        - node_js: "10"
+          branch: "init"
+    cache:
+      directories:
+      - node_modules
+      - "$(npm config get prefix)/node_modules"
+    script:
+    - npm run test:$TEST_SUITE
+    after_success:
+    - ./coveralls_upload.sh
   - stage: npm release
     node_js: stable
     script: npm run build
