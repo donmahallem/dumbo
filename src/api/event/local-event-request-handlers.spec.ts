@@ -6,63 +6,56 @@ import * as express from "express";
 import { relative } from "path";
 import * as process from "process";
 import * as sinon from "sinon";
-import * as supertest from "supertest";
 import { RouteError } from "../route-error";
+import { ILocalEvent } from "./local-event";
 import { LocalEventClient } from "./local-event-client";
 import { LocalEventRequestHandlers } from "./local-event-request-handlers";
 
 describe(relative(process.cwd(), __filename), () => {
     describe("LocalEventRequestHandlers", () => {
         let testClient: sinon.SinonStubbedInstance<LocalEventClient>;
-        let app: express.Application;
         let nextSpy: sinon.SinonSpy;
-        let server: any;
-        before((done) => {
-            app = express();
-            server = app.listen(done);
+        before(() => {
             nextSpy = sinon.spy();
             testClient = sinon.createStubInstance(LocalEventClient);
         });
 
-        after((done) => {
-            server.close(done);
-        });
         afterEach(() => {
             nextSpy.resetHistory();
         });
         describe("createGetLocalEventRequestHandler", () => {
-            before(() => {
-                const a = LocalEventRequestHandlers.createGetLocalEventRequestHandler(testClient);
-                app.get("/:id", a);
-                app.get("/", a);
-                app.use((err, req, res: express.Response, next) => {
-                    nextSpy(err);
-                    if (err instanceof RouteError) {
-                        res.status(err.status);
-                    }
-                    res.json({});
-                });
 
+            let testInstance: express.RequestHandler;
+            beforeEach(() => {
+                testInstance = LocalEventRequestHandlers.createGetLocalEventRequestHandler(testClient);
             });
-            it("should fail without provided ID param", () => {
+            it("should call the database client with the id", (done) => {
                 const testId: string = "randomtestid";
-                testClient.getLocalEventById.resolves(testId);
-                return supertest(app)
-                    .get("/")
-                    .expect(400)
-                    .expect((res: supertest.Response) => {
-                        expect(nextSpy.args[0][0]).to.be.instanceOf(RouteError);
-                    });
+                testClient.getLocalEventById.resolves(testId as ILocalEvent);
+                const responseSpy = sinon.stub();
+                responseSpy.callsFake((args) => {
+                    expect(args).to.deep.equal(testId);
+                    expect(nextSpy.callCount).to.equal(0);
+                    done();
+                });
+                testInstance({
+                    params: { id: testId },
+                } as express.Request, {
+                    json: responseSpy,
+                } as any, nextSpy);
             });
-            it("should call the database client with the id", () => {
+            it("should call the database client with the id but reject", (done) => {
                 const testId: string = "randomtestid";
-                testClient.getLocalEventById.resolves(testId);
-                return supertest(app)
-                    .get("/" + testId)
-                    .expect(200)
-                    .expect((res: supertest.Response) => {
-                        expect(res.body).to.equal(testId);
-                    });
+                const testError: RouteError = new RouteError(404, "Not found");
+                testClient.getLocalEventById.rejects(testError);
+                testInstance({
+                    params: { id: testId },
+                } as express.Request, {} as any, (args) => {
+                    expect(args).to.be.instanceOf(RouteError);
+                    expect(args).to.deep.equal(testError);
+                    expect(nextSpy.callCount).to.equal(0);
+                    done();
+                });
             });
         });
     });
