@@ -71,9 +71,11 @@ describe(relative(process.cwd(), __filename), () => {
                 });
             });
             it("should be true", () => {
-                const parsed = Number.parseInt(process.versions.node.substr(0, process.versions.node.indexOf("\.")));
-                expect(LocalEventRequestHandlers.isNewVersion()).to.equal(parsed >= 10);
-            })
+                const parsed = Number
+                    .parseInt(process.versions.node
+                        .substr(0, process.versions.node.indexOf("\.")), 10);
+                expect(LocalEventRequestHandlers.isNewVersion()).to.equal(parsed >= 10 ? "a" : "b");
+            });
         });
     });
 });
