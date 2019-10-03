@@ -57,6 +57,19 @@ describe(relative(process.cwd(), __filename), () => {
                     done();
                 });
             });
+            it("should call the database client with the id but reject", (done) => {
+                const testId: string = "randomtestid";
+                const testError: RouteError = new RouteError(404, "No event found");
+                testClient.getLocalEventById.resolves();
+                testInstance({
+                    params: { id: testId },
+                } as express.Request, {} as any, (args) => {
+                    expect(args).to.be.instanceOf(RouteError);
+                    expect(args).to.deep.equal(testError);
+                    expect(nextSpy.callCount).to.equal(0);
+                    done();
+                });
+            });
         });
     });
 });
