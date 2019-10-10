@@ -28,7 +28,6 @@
     "dependencies": {
         "@donmahallem/trapeze-api-express-route": "~1.8.0",
         "@donmahallem/trapeze-api-types": "~1.4.1",
-        "@types/supertest": "^2.0.8",
         "cors": "~2.8.5",
         "express": "~4.17.1",
         "helmet": "~3.21.1",
@@ -43,6 +42,7 @@
         "@types/mocha": "~5.2.7",
         "@types/node": "~12.7.8",
         "@types/sinon": "~7.0.13",
+        "@types/supertest": "~2.0.8",
         "apidoc": "~0.17.7",
         "chai": "~4.2.0",
         "mocha": "~6.2.0",

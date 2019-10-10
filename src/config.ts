@@ -20,10 +20,6 @@ export interface IServerConfig {
      * port to run on
      */
     port: number;
-    /**
-     * endpoint to query data from
-     */
-    endpoint: string;
 
     jwt: {
         issuer: string;
