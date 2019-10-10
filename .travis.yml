@@ -1,0 +1,65 @@
+language: node_js
+node_js:
+  - "8"
+  - "10"
+  - "stable"
+env:
+  global:
+  - COVERALLS_PARALLEL=true
+cache:
+  directories:
+  - node_modules
+  - "$(npm config get prefix)/node_modules"
+script:
+- npm run test:unit
+after_success:
+- ./coveralls_upload.sh
+jobs:
+  include:
+  - stage: Test Docs Generation
+    node_js: stable
+    script:
+      - npm run test:api-docs
+      - npm run test:docs
+  - stage: npm release
+    node_js: stable
+    script: npm run build
+    if: (tag IS present) AND (branch = master)
+    deploy:
+      provider: npm
+      skip_cleanup: true
+      email: $npm_email
+      api_key: $npm_api_key
+      on:
+        tags: true
+        repo: donmahallem/TrapezeApiExpressServer
+  - stage: npm next release
+    node_js: stable
+    script:
+    - npm run build
+    - npm version from-git
+    if: (branch = dev) AND (tag IS present)
+    deploy:
+      provider: npm
+      skip_cleanup: true
+      email: $npm_email
+      api_key: $npm_api_key
+      on:
+        tags: true
+        repo: donmahallem/TrapezeApiExpressServer
+  - stage: github pages release
+    node_js: stable
+    script:
+    - npm run docs
+    - npm run api-docs
+    if: branch = master
+    deploy:
+      provider: pages
+      skip-cleanup: true
+      local-dir: docs
+      github-token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
+      keep-history: true
+      on:
+        branch: master
+notifications:
+  webhooks: https://coveralls.io/webhook
